@@ -29,6 +29,21 @@ contract EventVotingController {
     ) public {
         require(canCreateEvent(msg.sender), "Event limit reached for today");
 
+        // TODO: Verify 'who' is in the allowed list using the Merkle tree
+        // require(isValidWho(who, merkleProof), "Invalid 'who', not in the list");
+
+        // Limit the 'what' string to ASCII characters only
+        require(
+            isAsciiString(what),
+            "The 'what' contains non-ASCII characters"
+        );
+
+        // Limit the 'what' string to 280 characters (like Twitter)
+        require(
+            bytes(what).length <= 280,
+            "The 'what' description is too long"
+        );
+
         eventVotingNFT.createEvent(who, what, when);
 
         updateCreateEventCount(msg.sender);
@@ -72,5 +87,15 @@ contract EventVotingController {
         } else {
             voteCount[user]++;
         }
+    }
+
+    function isAsciiString(string memory str) internal pure returns (bool) {
+        bytes memory strBytes = bytes(str);
+        for (uint i = 0; i < strBytes.length; i++) {
+            if (uint8(strBytes[i]) > 0x7F) {
+                return false;
+            }
+        }
+        return true;
     }
 }
