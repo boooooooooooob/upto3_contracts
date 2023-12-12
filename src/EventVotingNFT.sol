@@ -127,4 +127,37 @@ contract EventVotingNFT is ERC721, UUPSUpgradeable, Ownable {
     }
 
     // Additional functions like view functions to get event details, vote counts etc.
+    function getEvent(
+        uint256 eventId
+    )
+        public
+        view
+        returns (
+            string memory who,
+            string memory what,
+            uint256 when,
+            address creator,
+            uint256 yesVotes,
+            uint256 noVotes
+        )
+    {
+        require(_exists(eventId), "Event does not exist.");
+        Event memory eventInfo = events[eventId];
+        return (
+            eventInfo.who,
+            eventInfo.what,
+            eventInfo.when,
+            eventInfo.creator,
+            eventInfo.yesVotes,
+            eventInfo.noVotes
+        );
+    }
+
+    function isVoted(
+        uint256 eventId,
+        address voter
+    ) public view returns (bool) {
+        require(_exists(eventId), "Event does not exist.");
+        return hasVoted[eventId][voter];
+    }
 }
