@@ -3,46 +3,74 @@ pragma solidity ^0.8.13;
 
 import "./EventVotingNFT.sol";
 
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+
 contract EventVotingController {
     EventVotingNFT public eventVotingNFT;
 
-    uint256 public constant MAX_ACTIONS_PER_DAY = 5; // maximum number of actions per 24 hours
-    uint256 public constant DAY_IN_SECONDS = 86400; // seconds in a day
+    uint256 public constant MAX_CREATE_EVENT_PER_DAY = 5;
+    uint256 public constant MAX_VOTE_PER_DAY = 5;
+    uint256 public constant DAY_IN_SECONDS = 86400;
 
-    mapping(address => uint256) public lastActionTime;
-    mapping(address => uint256) public actionCount;
+    mapping(address => uint256) public lastCreateEventTime;
+    mapping(address => uint256) public createEventCount;
+    mapping(address => uint256) public lastVoteTime;
+    mapping(address => uint256) public voteCount;
 
-    constructor(address _eventVotingNFT) {
+    function initialize(address _eventVotingNFT) public initializer {
         eventVotingNFT = EventVotingNFT(_eventVotingNFT);
         eventVotingNFT.grantRole(eventVotingNFT.CONTROLLER_ROLE, address(this));
     }
 
-    function performAction(uint256 eventId, bool vote) public {
-        require(canPerformAction(msg.sender), "Action limit reached for today");
+    function createEvent(
+        string memory who,
+        string memory what,
+        uint256 when
+    ) public {
+        require(canCreateEvent(msg.sender), "Event limit reached for today");
 
-        if (vote) {
-            eventVotingNFT.vote(eventId);
-        } else {
-            // Assuming createEvent is exposed and can be called
-            // eventVotingNFT.createEvent(...);
-        }
+        eventVotingNFT.createEvent(who, what, when);
 
-        updateActionCount(msg.sender);
+        updateCreateEventCount(msg.sender);
     }
 
-    function canPerformAction(address user) public view returns (bool) {
-        if (block.timestamp - lastActionTime[user] > DAY_IN_SECONDS) {
-            return true; // More than 24 hours since last action
+    function canCreateEvent(address user) public view returns (bool) {
+        if (block.timestamp - lastCreateEventTime[user] > DAY_IN_SECONDS) {
+            return true;
         }
-        return actionCount[user] < MAX_ACTIONS_PER_DAY;
+        return createEventCount[user] < MAX_CREATE_EVENT_PER_DAY;
     }
 
-    function updateActionCount(address user) internal {
-        if (block.timestamp - lastActionTime[user] > DAY_IN_SECONDS) {
-            actionCount[user] = 1;
-            lastActionTime[user] = block.timestamp;
+    function updateCreateEventCount(address user) internal {
+        if (block.timestamp - lastCreateEventTime[user] > DAY_IN_SECONDS) {
+            createEventCount[user] = 1;
+            lastCreateEventTime[user] = block.timestamp;
         } else {
-            actionCount[user]++;
+            createEventCount[user]++;
+        }
+    }
+
+    function vote(uint256 eventId) public {
+        require(canVote(msg.sender), "Vote limit reached for today");
+
+        eventVotingNFT.vote(eventId);
+
+        updateVoteCount(msg.sender);
+    }
+
+    function canVote(address user) public view returns (bool) {
+        if (block.timestamp - lastVoteTime[user] > DAY_IN_SECONDS) {
+            return true;
+        }
+        return voteCount[user] < MAX_VOTE_PER_DAY;
+    }
+
+    function updateVoteCount(address user) internal {
+        if (block.timestamp - lastVoteTime[user] > DAY_IN_SECONDS) {
+            voteCount[user] = 1;
+            lastVoteTime[user] = block.timestamp;
+        } else {
+            voteCount[user]++;
         }
     }
 }
