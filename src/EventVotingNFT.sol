@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/token";
 import "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
-contract EventVotingNFT is ERC721, UUPSUpgradeable, Ownable {
+contract EventVotingNFT is ERC721, Initializable, Ownable, AccessControl {
     struct Event {
         string who;
         string what;
@@ -28,6 +30,8 @@ contract EventVotingNFT is ERC721, UUPSUpgradeable, Ownable {
     );
     event Voted(uint256 eventId, bool vote, address voter);
 
+    bytes32 public constant CONTROLLER_ROLE = keccak256("CONTROLLER_ROLE");
+
     function initialize() public initializer {
         __ERC721_init("EventVotingNFT", "EVNFT");
         __Ownable_init();
@@ -37,7 +41,7 @@ contract EventVotingNFT is ERC721, UUPSUpgradeable, Ownable {
         string memory who,
         string memory what,
         uint256 when
-    ) public {
+    ) public onlyRole(CONTROLLER_ROLE) {
         require(
             when >= 1000000000 && when <= 9999999999,
             "Invalid Unix timestamp"
@@ -56,7 +60,10 @@ contract EventVotingNFT is ERC721, UUPSUpgradeable, Ownable {
         emit EventCreated(eventId, who, what, when, msg.sender);
     }
 
-    function vote(uint256 eventId, bool voteYes) public {
+    function vote(
+        uint256 eventId,
+        bool voteYes
+    ) public onlyRole(CONTROLLER_ROLE) {
         require(_exists(eventId), "Event does not exist.");
         require(
             !hasVoted[eventId][msg.sender],
