@@ -15,6 +15,18 @@ contract EventVotingNFT is
     AccessControlUpgradeable,
     UUPSUpgradeable
 {
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
+    function initialize() public initializer {
+        __ERC721_init("EventVotingNFT", "EVNFT");
+        __Ownable_init(msg.sender);
+        __AccessControl_init();
+        __UUPSUpgradeable_init();
+    }
+
     function supportsInterface(
         bytes4 interfaceId
     )
@@ -51,18 +63,6 @@ contract EventVotingNFT is
     bytes32 public constant CONTROLLER_ROLE = keccak256("CONTROLLER_ROLE");
 
     uint256 private _nextTokenId;
-
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
-        _disableInitializers();
-    }
-
-    function initialize() public initializer {
-        __ERC721_init("EventVotingNFT", "EVNFT");
-        __Ownable_init(msg.sender);
-        __AccessControl_init();
-        __UUPSUpgradeable_init();
-    }
 
     function createEvent(
         string memory who,
@@ -120,41 +120,69 @@ contract EventVotingNFT is
             "ERC721Metadata: URI query for nonexistent token"
         );
 
-        Event memory eventInfo = events[tokenId];
-
-        // Encode the JSON metadata directly in the URI
-        string memory json = Base64.encode(
-            bytes(
-                string(
-                    abi.encodePacked(
-                        '{"name": "Event #',
-                        Strings.toString(tokenId),
-                        '",',
-                        '"description": "This NFT represents an event with votes.",',
-                        '", "attributes": [',
-                        '{"trait_type": "Who", "value": "',
-                        eventInfo.who,
-                        '"},',
-                        '{"trait_type": "What", "value": "',
-                        eventInfo.what,
-                        '"},',
-                        '{"trait_type": "When", "value": "',
-                        Strings.toString(eventInfo.when),
-                        '"},',
-                        '{"trait_type": "YesVotes", "value": "',
-                        Strings.toString(eventInfo.yesVotes),
-                        '"},',
-                        '{"trait_type": "NoVotes", "value": "',
-                        Strings.toString(eventInfo.noVotes),
-                        '"}',
-                        "]}"
+        // Inline and directly concatenate parts of the JSON string
+        return
+            string(
+                abi.encodePacked(
+                    "data:application/json;base64,",
+                    Base64.encode(
+                        bytes(
+                            abi.encodePacked(
+                                '{"name": "Event #',
+                                Strings.toString(tokenId),
+                                '",',
+                                '"description": "This NFT represents an event with votes.",',
+                                '"attributes": [',
+                                formatAttribute(
+                                    "Who",
+                                    events[tokenId].who,
+                                    false
+                                ),
+                                formatAttribute(
+                                    "What",
+                                    events[tokenId].what,
+                                    false
+                                ),
+                                formatAttribute(
+                                    "When",
+                                    Strings.toString(events[tokenId].when),
+                                    false
+                                ),
+                                formatAttribute(
+                                    "YesVotes",
+                                    Strings.toString(events[tokenId].yesVotes),
+                                    false
+                                ),
+                                formatAttribute(
+                                    "NoVotes",
+                                    Strings.toString(events[tokenId].noVotes),
+                                    true
+                                ),
+                                "]}"
+                            )
+                        )
                     )
                 )
-            )
-        );
+            );
+    }
 
-        // Prefix with `data:application/json;base64,` to denote the encoding and data type
-        return string(abi.encodePacked("data:application/json;base64,", json));
+    function formatAttribute(
+        string memory traitType,
+        string memory value,
+        bool isLastAttribute
+    ) internal pure returns (string memory) {
+        string memory comma = isLastAttribute ? "" : ",";
+        return
+            string(
+                abi.encodePacked(
+                    '{"trait_type": "',
+                    traitType,
+                    '", "value": "',
+                    value,
+                    '"}',
+                    comma
+                )
+            );
     }
 
     // Additional functions like view functions to get event details, vote counts etc.

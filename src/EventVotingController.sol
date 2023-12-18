@@ -5,7 +5,7 @@ import "./EventVotingNFT.sol";
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract EventVotingController {
+contract EventVotingController is Initializable {
     EventVotingNFT public eventVotingNFT;
 
     uint256 public constant MAX_CREATE_EVENT_PER_DAY = 5;
@@ -17,9 +17,18 @@ contract EventVotingController {
     mapping(address => uint256) public lastVoteTime;
     mapping(address => uint256) public voteCount;
 
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
     function initialize(address _eventVotingNFT) public initializer {
         eventVotingNFT = EventVotingNFT(_eventVotingNFT);
-        eventVotingNFT.grantRole(eventVotingNFT.CONTROLLER_ROLE, address(this));
+
+        eventVotingNFT.grantRole(
+            eventVotingNFT.CONTROLLER_ROLE(),
+            address(this)
+        );
     }
 
     function createEvent(
@@ -65,10 +74,10 @@ contract EventVotingController {
         }
     }
 
-    function vote(uint256 eventId) public {
+    function vote(uint256 eventId, bool voteYes) public {
         require(canVote(msg.sender), "Vote limit reached for today");
 
-        eventVotingNFT.vote(eventId);
+        eventVotingNFT.vote(eventId, voteYes);
 
         updateVoteCount(msg.sender);
     }
