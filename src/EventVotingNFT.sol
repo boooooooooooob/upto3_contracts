@@ -1,12 +1,31 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.23;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts/utils/Base64.sol";
 
-contract EventVotingNFT is ERC721, Initializable, Ownable, AccessControl {
+contract EventVotingNFT is
+    Initializable,
+    ERC721Upgradeable,
+    OwnableUpgradeable,
+    AccessControlUpgradeable,
+    UUPSUpgradeable
+{
+    function supportsInterface(
+        bytes4 interfaceId
+    )
+        public
+        view
+        override(ERC721Upgradeable, AccessControlUpgradeable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+
     struct Event {
         string who;
         string what;
@@ -31,9 +50,18 @@ contract EventVotingNFT is ERC721, Initializable, Ownable, AccessControl {
 
     bytes32 public constant CONTROLLER_ROLE = keccak256("CONTROLLER_ROLE");
 
+    uint256 private _nextTokenId;
+
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
     function initialize() public initializer {
         __ERC721_init("EventVotingNFT", "EVNFT");
-        __Ownable_init();
+        __Ownable_init(msg.sender);
+        __AccessControl_init();
+        __UUPSUpgradeable_init();
     }
 
     function createEvent(
@@ -53,8 +81,9 @@ contract EventVotingNFT is ERC721, Initializable, Ownable, AccessControl {
         );
         uniqueEvents[eventKey] = true;
 
-        uint256 eventId = totalSupply() + 1;
+        uint256 eventId = _nextTokenId++;
         _mint(msg.sender, eventId);
+
         events[eventId] = Event(who, what, when, msg.sender, 0, 0);
         emit EventCreated(eventId, who, what, when, msg.sender);
     }
@@ -162,4 +191,12 @@ contract EventVotingNFT is ERC721, Initializable, Ownable, AccessControl {
         require(_exists(eventId), "Event does not exist.");
         return hasVoted[eventId][voter];
     }
+
+    function _exists(uint256 tokenId) internal view returns (bool) {
+        return _ownerOf(tokenId) != address(0);
+    }
+
+    function _authorizeUpgrade(
+        address newImplementation
+    ) internal override onlyOwner {}
 }
