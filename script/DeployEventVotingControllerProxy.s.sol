@@ -1,18 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
-import "../src/EventVotingNFT.sol";
+import "../src/EventVotingController.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "forge-std/Script.sol";
 
 contract DeployUUPSProxy is Script {
     function run() public {
-        address _implementation = 0xc8E94a05fE0F93f247290dc10D2593e12622CE59; // Replace with your token address
+        address _implementation = 0x562d60dA90925Ea3d69Dae1A6A55D440fc144354; // Replace with your token address
         vm.startBroadcast();
 
         // Encode the initializer function call
         bytes memory data = abi.encodeWithSelector(
-            EventVotingNFT(_implementation).initialize.selector
+            EventVotingController(_implementation).initialize.selector,
+            0x1dB31D9b412Eba16D1fBF3E3Df0952202016589f
         );
 
         // Deploy the proxy contract with the implementation address and initializer

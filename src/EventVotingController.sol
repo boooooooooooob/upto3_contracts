@@ -24,11 +24,6 @@ contract EventVotingController is Initializable {
 
     function initialize(address _eventVotingNFT) public initializer {
         eventVotingNFT = EventVotingNFT(_eventVotingNFT);
-
-        eventVotingNFT.grantRole(
-            eventVotingNFT.CONTROLLER_ROLE(),
-            address(this)
-        );
     }
 
     function createEvent(

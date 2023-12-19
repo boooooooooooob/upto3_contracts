@@ -20,6 +20,8 @@ contract EventVotingNFT is
         _disableInitializers();
     }
 
+    bytes32 public constant CONTROLLER_ROLE = keccak256("CONTROLLER_ROLE");
+
     function initialize() public initializer {
         __ERC721_init("EventVotingNFT", "EVNFT");
         __Ownable_init(msg.sender);
@@ -60,9 +62,11 @@ contract EventVotingNFT is
     );
     event Voted(uint256 eventId, bool vote, address voter);
 
-    bytes32 public constant CONTROLLER_ROLE = keccak256("CONTROLLER_ROLE");
-
     uint256 private _nextTokenId;
+
+    function grantControllerRole(address account) public onlyOwner {
+        _grantRole(CONTROLLER_ROLE, account);
+    }
 
     function createEvent(
         string memory who,
