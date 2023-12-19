@@ -1,66 +1,28 @@
-## Foundry
+## Upto3
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+### Sepolia contract addresses
 
-Foundry consists of:
+|  contract | address |   |   |   |
+|---|---|---|---|---|
+| Event Voting NFT | 0xc8E94a05fE0F93f247290dc10D2593e12622CE59 |   |   |   |
+| Event Voting NFT Proxy  | 0x37ab95a25A548042b106358b14d1b11dd61c7AFd |   |   |   |
+|   |   |   |   |   |
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+### Deploy and Verify contracts on Sepolia
 
-## Documentation
-
-https://book.getfoundry.sh/
-
-## Usage
-
-### Build
-
-```shell
-$ forge build
+```bash
+export PRIVATE_KEY=0x...
+export ETHERSCAN_API_KEY=...
 ```
 
-### Test
+- Event Voting NFT
 
-```shell
-$ forge test
+```bash
+forge script script/DeployEventVotingNFT.s.sol --rpc-url sepolia --private-key $PRIVATE_KEY --broadcast --etherscan-api-key $ETHERSCAN_API_KEY --verify
 ```
 
-### Format
+- Event Voting NFT Proxy
 
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
+```bash
+forge script script/deployProxy.s.sol:DeployUUPSProxy --rpc-url sepolia --private-key $PRIVATE_KEY --broadcast --etherscan-api-key $ETHERSCAN_API_KEY --verify
 ```
