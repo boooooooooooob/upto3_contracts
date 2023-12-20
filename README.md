@@ -39,3 +39,30 @@ forge script script/DeployEventVotingController.s.sol --rpc-url sepolia --privat
 ```bash
 forge script script/DeployEventVotingControllerProxy.s.sol:DeployUUPSProxy --rpc-url sepolia --private-key $PRIVATE_KEY --broadcast --etherscan-api-key $ETHERSCAN_API_KEY --verify
 ```
+
+
+### Publish on TheGraph
+
+- Initialize subgraph.
+
+```bash
+graph init --studio event-voting-nft
+```
+
+- AUTH 
+
+```bash
+graph auth --studio 49956ada4ee48d4881a0e91c561bfb95
+```
+
+- Build
+
+```bash
+graph codegen && graph build
+```
+
+- Deploy
+
+```bash
+graph deploy --studio event-voting-nft
+```
