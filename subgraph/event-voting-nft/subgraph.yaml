@@ -6,7 +6,7 @@ dataSources:
     name: EventVotingNFT
     network: sepolia
     source:
-      address: "0x1dB31D9b412Eba16D1fBF3E3Df0952202016589f"
+      address: '0x1dB31D9b412Eba16D1fBF3E3Df0952202016589f'
       abi: EventVotingNFT
       startBlock: 4914632
     mapping:
@@ -14,11 +14,11 @@ dataSources:
       apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
-        - Upgraded
+        - EventVotingNFT
       abis:
         - name: EventVotingNFT
           file: ./abis/EventVotingNFT.json
       eventHandlers:
-        - event: Upgraded(indexed address)
-          handler: handleUpgraded
+        - event: EventCreated(uint256,string,string,uint256,address)
+          handler: handleEventCreated
       file: ./src/event-voting-nft.ts

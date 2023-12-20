@@ -1,15 +1,13 @@
-import { Upgraded as UpgradedEvent } from "../generated/EventVotingNFT/EventVotingNFT"
-import { Upgraded } from "../generated/schema"
+import { EventCreated } from '../generated/EventVotingNFT/EventVotingNFT'
+import { EventVotingNFT } from '../generated/schema'
 
-export function handleUpgraded(event: UpgradedEvent): void {
-  let entity = new Upgraded(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.implementation = event.params.implementation
+export function handleEventCreated(event: EventCreated): void {
+  let entity = new EventVotingNFT(event.params.eventId.toHex())
 
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
+  entity.who = event.params.who
+  entity.what = event.params.what
+  entity.when = event.params.when
+  entity.creator = event.params.creator
 
   entity.save()
 }

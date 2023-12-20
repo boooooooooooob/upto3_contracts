@@ -1,7 +1,7 @@
-type Upgraded @entity(immutable: true) {
-  id: Bytes!
-  implementation: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+type EventVotingNFT @entity(immutable: true) {
+  id: ID!
+  who: String
+  what: String
+  when: BigInt
+  creator: Bytes
 }

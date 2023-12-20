@@ -85,7 +85,7 @@ contract EventVotingNFT is
         );
         uniqueEvents[eventKey] = true;
 
-        uint256 eventId = _nextTokenId++;
+        uint256 eventId = ++_nextTokenId;
         _mint(msg.sender, eventId);
 
         events[eventId] = Event(who, what, when, msg.sender, 0, 0);
