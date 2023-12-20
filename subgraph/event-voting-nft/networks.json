@@ -1,0 +1,8 @@
+{
+  "sepolia": {
+    "EventVotingNFT": {
+      "address": "0x1dB31D9b412Eba16D1fBF3E3Df0952202016589f",
+      "startBlock": 4914632
+    }
+  }
+}
