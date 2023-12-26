@@ -71,7 +71,8 @@ contract EventVotingNFT is
     function createEvent(
         string memory who,
         string memory what,
-        uint256 when
+        uint256 when,
+        address originalSender
     ) public onlyRole(CONTROLLER_ROLE) {
         require(
             when >= 1000000000 && when <= 9999999999,
@@ -86,23 +87,24 @@ contract EventVotingNFT is
         uniqueEvents[eventKey] = true;
 
         uint256 eventId = ++_nextTokenId;
-        _mint(msg.sender, eventId);
+        _mint(originalSender, eventId);
 
-        events[eventId] = Event(who, what, when, msg.sender, 0, 0);
-        emit EventCreated(eventId, who, what, when, msg.sender);
+        events[eventId] = Event(who, what, when, originalSender, 0, 0);
+        emit EventCreated(eventId, who, what, when, originalSender);
     }
 
     function vote(
         uint256 eventId,
-        bool voteYes
+        bool voteYes,
+        address originalSender
     ) public onlyRole(CONTROLLER_ROLE) {
         require(_exists(eventId), "Event does not exist.");
         require(
-            !hasVoted[eventId][msg.sender],
+            !hasVoted[eventId][originalSender],
             "You have already voted for this event."
         );
         require(
-            events[eventId].creator != msg.sender,
+            events[eventId].creator != originalSender,
             "Event creator cannot vote."
         );
 
@@ -113,9 +115,9 @@ contract EventVotingNFT is
         } else {
             events[eventId].noVotes += 1;
         }
-        hasVoted[eventId][msg.sender] = true;
+        hasVoted[eventId][originalSender] = true;
 
-        emit Voted(eventId, voteYes, msg.sender);
+        emit Voted(eventId, voteYes, originalSender);
     }
 
     function tokenURI(

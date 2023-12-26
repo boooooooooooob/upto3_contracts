@@ -4,10 +4,10 @@
 
 |  contract | address |   |   |   |
 |---|---|---|---|---|
-| Event Voting NFT | 0x39F0B612c06A9bf0Fec5Feb233864e645fc872a0 |   |   |   |
+| Event Voting NFT | 0x8bc67D8BF0dBB3Dcd0d7dF0Aff55f2c3D661d2f6 |   |   |   |
 | Event Voting NFT Proxy  | 0x1dB31D9b412Eba16D1fBF3E3Df0952202016589f |   |   |   |
-| Event Voting Controller | 0x562d60dA90925Ea3d69Dae1A6A55D440fc144354 |   |   |   |
-| Event Voting Controller Proxy | 0x3289320CD8631B24662800dd167Ac5bb8534dd53 |   |   |   |
+| Event Voting Controller | 0x35d147377D2e5921CaA5b910c33B99c893C84Ee4 |   |   |   |
+| Event Voting Controller Proxy | 0x868bf4e537112a196bdb9161a69779ACe0331dfE |   |   |   |
 
 ### Deploy and Verify contracts on Sepolia
 

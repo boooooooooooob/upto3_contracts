@@ -4,8 +4,14 @@ pragma solidity ^0.8.13;
 import "./EventVotingNFT.sol";
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
-contract EventVotingController is Initializable {
+contract EventVotingController is
+    Initializable,
+    OwnableUpgradeable,
+    UUPSUpgradeable
+{
     EventVotingNFT public eventVotingNFT;
 
     uint256 public constant MAX_CREATE_EVENT_PER_DAY = 5;
@@ -24,6 +30,8 @@ contract EventVotingController is Initializable {
 
     function initialize(address _eventVotingNFT) public initializer {
         eventVotingNFT = EventVotingNFT(_eventVotingNFT);
+        __Ownable_init(msg.sender);
+        __UUPSUpgradeable_init();
     }
 
     function createEvent(
@@ -48,7 +56,7 @@ contract EventVotingController is Initializable {
             "The 'what' description is too long"
         );
 
-        eventVotingNFT.createEvent(who, what, when);
+        eventVotingNFT.createEvent(who, what, when, msg.sender);
 
         updateCreateEventCount(msg.sender);
     }
@@ -72,7 +80,7 @@ contract EventVotingController is Initializable {
     function vote(uint256 eventId, bool voteYes) public {
         require(canVote(msg.sender), "Vote limit reached for today");
 
-        eventVotingNFT.vote(eventId, voteYes);
+        eventVotingNFT.vote(eventId, voteYes, msg.sender);
 
         updateVoteCount(msg.sender);
     }
@@ -102,4 +110,8 @@ contract EventVotingController is Initializable {
         }
         return true;
     }
+
+    function _authorizeUpgrade(
+        address newImplementation
+    ) internal override onlyOwner {}
 }
