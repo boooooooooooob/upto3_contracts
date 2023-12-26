@@ -21,4 +21,6 @@ dataSources:
       eventHandlers:
         - event: EventCreated(uint256,string,string,uint256,address)
           handler: handleEventCreated
+        - event: Voted(uint256,bool,address)
+          handler: handleEventVoted
       file: ./src/event-voting-nft.ts

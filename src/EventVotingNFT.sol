@@ -106,6 +106,8 @@ contract EventVotingNFT is
             "Event creator cannot vote."
         );
 
+        // TODO: Can only vote if the event is still open(Created, Passed, Failed, ReOpened, Cancelled)
+
         if (voteYes) {
             events[eventId].yesVotes += 1;
         } else {

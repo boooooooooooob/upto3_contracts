@@ -4,4 +4,16 @@ type EventVotingNFT @entity(immutable: true) {
   what: String
   when: BigInt
   creator: Bytes
+  yes: Int
+  no: Int
+  status: String
+  votes: [Vote!]! @derivedFrom(field: "eventVotingNFT")
+}
+
+type Vote @entity(immutable: true) {
+  id: ID!
+  eventVotingNFT: EventVotingNFT!
+  eventVotingNFTId: String!
+  voter: Bytes
+  voteYes: Boolean
 }
