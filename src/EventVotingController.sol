@@ -14,14 +14,16 @@ contract EventVotingController is
 {
     EventVotingNFT public eventVotingNFT;
 
-    uint256 public constant MAX_CREATE_EVENT_PER_DAY = 5;
-    uint256 public constant MAX_VOTE_PER_DAY = 5;
-    uint256 public constant DAY_IN_SECONDS = 86400;
+    uint32 public constant MAX_CREATE_EVENT_PER_DAY = 5;
+    uint32 public constant MAX_VOTE_PER_DAY = 5;
+    uint32 public constant DAY_IN_SECONDS = 86400;
 
-    mapping(address => uint256) public lastCreateEventTime;
-    mapping(address => uint256) public createEventCount;
-    mapping(address => uint256) public lastVoteTime;
-    mapping(address => uint256) public voteCount;
+    mapping(address => uint32) public lastCreateEventTime;
+    mapping(address => uint32) public createEventCount;
+    mapping(address => uint32) public lastVoteTime;
+    mapping(address => uint32) public voteCount;
+
+    mapping(address => uint32) public honorPoint;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -37,7 +39,7 @@ contract EventVotingController is
     function createEvent(
         string memory who,
         string memory what,
-        uint256 when
+        uint32 when
     ) public {
         require(canCreateEvent(msg.sender), "Event limit reached for today");
 
@@ -71,13 +73,13 @@ contract EventVotingController is
     function updateCreateEventCount(address user) internal {
         if (block.timestamp - lastCreateEventTime[user] > DAY_IN_SECONDS) {
             createEventCount[user] = 1;
-            lastCreateEventTime[user] = block.timestamp;
+            lastCreateEventTime[user] = uint32(block.timestamp);
         } else {
             createEventCount[user]++;
         }
     }
 
-    function vote(uint256 eventId, bool voteYes) public {
+    function vote(uint32 eventId, bool voteYes) public {
         require(canVote(msg.sender), "Vote limit reached for today");
 
         eventVotingNFT.vote(eventId, voteYes, msg.sender);
@@ -95,7 +97,7 @@ contract EventVotingController is
     function updateVoteCount(address user) internal {
         if (block.timestamp - lastVoteTime[user] > DAY_IN_SECONDS) {
             voteCount[user] = 1;
-            lastVoteTime[user] = block.timestamp;
+            lastVoteTime[user] = uint32(block.timestamp);
         } else {
             voteCount[user]++;
         }
