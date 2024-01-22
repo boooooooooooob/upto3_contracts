@@ -5,5 +5,7 @@ libs = ["lib"]
 
 build_info = true
 extra_output = ["storageLayout"]
+
 [rpc_endpoints]
 sepolia = "https://sepolia.infura.io/v3/aa2e16eb4c8a47e7906fe1a602802a54"
+blast_testnet = "https://rpc.ankr.com/blast_testnet_sepolia/132e2927392381d963160e832885e454edf2dccc3816772012e70573b4318340"
