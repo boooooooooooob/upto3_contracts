@@ -1,0 +1,8 @@
+{
+  "blast-testnet": {
+    "EventVotingNFT": {
+      "address": "0xc8E94a05fE0F93f247290dc10D2593e12622CE59",
+      "startBlock": 613251
+    }
+  }
+}
