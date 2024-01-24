@@ -101,13 +101,13 @@ forge script script/DeployEventVotingControllerProxy.s.sol:DeployUUPSProxy \
 - Initialize subgraph.
 
 ```bash
-graph init --studio event-voting-nft
+graph init --studio event-voting-on-blast
 ```
 
 - AUTH 
 
 ```bash
-graph auth --studio 49956ada4ee48d4881a0e91c561bfb95
+graph auth --studio $key
 ```
 
 - Build
