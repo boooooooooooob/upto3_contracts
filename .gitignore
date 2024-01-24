@@ -18,3 +18,5 @@ broadcast/
 node_modules/
 
 build/
+
+generated/
