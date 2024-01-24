@@ -7,13 +7,13 @@ import "forge-std/Script.sol";
 
 contract DeployUUPSProxy is Script {
     function run() public {
-        address _implementation = 0xFf073575A5c1A1F0EC0D9aE5f59DE4d8acecFC81; // Replace with your token address
+        address _implementation = 0x562d60dA90925Ea3d69Dae1A6A55D440fc144354; // Replace with your token address
         vm.startBroadcast();
 
         // Encode the initializer function call
         bytes memory data = abi.encodeWithSelector(
             EventVotingController(_implementation).initialize.selector,
-            0xc8E94a05fE0F93f247290dc10D2593e12622CE59
+            0x1dB31D9b412Eba16D1fBF3E3Df0952202016589f
         );
 
         // Deploy the proxy contract with the implementation address and initializer

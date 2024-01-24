@@ -12,10 +12,10 @@
 ### Blast testnet contract addresses
 |  contract | address |   |   |   |
 |---|---|---|---|---|
-| Event Voting NFT | 0x333f50702DFB7FC32CFccEA9F587326D27c6E214 |   |   |   |
-| Event Voting NFT Proxy  | 0xc8E94a05fE0F93f247290dc10D2593e12622CE59 |   |   |   |
-| Event Voting Controller | 0xFf073575A5c1A1F0EC0D9aE5f59DE4d8acecFC81 |   |   |   |
-| Event Voting Controller Proxy | 0x7A2775A97BDE364D0B96B003e6dC344267344F3c |   |   |   |
+| Event Voting NFT | 0x39F0B612c06A9bf0Fec5Feb233864e645fc872a0 |   |   |   |
+| Event Voting NFT Proxy  | 0x1dB31D9b412Eba16D1fBF3E3Df0952202016589f |   |   |   |
+| Event Voting Controller | 0x562d60dA90925Ea3d69Dae1A6A55D440fc144354 |   |   |   |
+| Event Voting Controller Proxy | 0x3289320CD8631B24662800dd167Ac5bb8534dd53 |   |   |   |
 
 ### Deploy and Verify contracts on Sepolia
 
@@ -58,25 +58,41 @@ export ETHERSCAN_API_KEY=...
 - Event Voting NFT
 
 ```bash
-forge script script/DeployEventVotingNFT.s.sol --rpc-url blast_testnet --private-key $PRIVATE_KEY --broadcast --verifier-url 'https://api.routescan.io/v2/network/testnet/evm/168587773/etherscan' --etherscan-api-key $ETHERSCAN_API_KEY --verify
+forge script script/DeployEventVotingNFT.s.sol:DeployEventVotingNFTImplementation \
+--broadcast --rpc-url blast_testnet \
+--verifier-url 'https://api.routescan.io/v2/network/testnet/evm/168587773/etherscan'\
+--etherscan-api-key "verifyContract" \
+--private-key $PRIVATE_KEY
 ```
 
 - Event Voting NFT Proxy
 
 ```bash
-forge script script/DeployEventVotingNFTProxy.s.sol:DeployUUPSProxy --rpc-url blast_testnet --private-key $PRIVATE_KEY --broadcast --verifier-url 'https://api.routescan.io/v2/network/testnet/evm/168587773/etherscan' --etherscan-api-key $ETHERSCAN_API_KEY --verify
+forge script script/DeployEventVotingNFTProxy.s.sol:DeployUUPSProxy \
+--broadcast --rpc-url blast_testnet \
+--verifier-url 'https://api.routescan.io/v2/network/testnet/evm/168587773/etherscan'\
+--etherscan-api-key "verifyContract" \
+--private-key $PRIVATE_KEY
 ```
 
 - Event Voting Controller NFT
 
 ```bash
-forge script script/DeployEventVotingController.s.sol --rpc-url blast_testnet --private-key $PRIVATE_KEY --broadcast --verifier-url 'https://api.routescan.io/v2/network/testnet/evm/168587773/etherscan' --etherscan-api-key $ETHERSCAN_API_KEY --verify
+forge script script/DeployEventVotingController.s.sol:DeployEventVotingControllerImplementation \
+--broadcast --rpc-url blast_testnet \
+--verifier-url 'https://api.routescan.io/v2/network/testnet/evm/168587773/etherscan'\
+--etherscan-api-key "verifyContract" \
+--private-key $PRIVATE_KEY
 ```
 
 - Event Voting NFT Controller Proxy
 
 ```bash
-forge script script/DeployEventVotingControllerProxy.s.sol:DeployUUPSProxy --rpc-url blast_testnet --private-key $PRIVATE_KEY --broadcast --verifier-url 'https://api.routescan.io/v2/network/testnet/evm/168587773/etherscan' --etherscan-api-key $ETHERSCAN_API_KEY --verify
+forge script script/DeployEventVotingControllerProxy.s.sol:DeployUUPSProxy \
+--broadcast --rpc-url blast_testnet \
+--verifier-url 'https://api.routescan.io/v2/network/testnet/evm/168587773/etherscan'\
+--etherscan-api-key "verifyContract" \
+--private-key $PRIVATE_KEY
 ```
 
 

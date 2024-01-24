@@ -1,4 +1,4 @@
-type EventVotingNFT @entity(immutable: true) {
+type EventVotingNFT @entity {
   id: ID!
   who: String
   what: String

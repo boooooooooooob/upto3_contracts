@@ -557,6 +557,11 @@
         "internalType": "uint256",
         "name": "when",
         "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "originalSender",
+        "type": "address"
       }
     ],
     "name": "createEvent",
@@ -1110,6 +1115,11 @@
         "internalType": "bool",
         "name": "voteYes",
         "type": "bool"
+      },
+      {
+        "internalType": "address",
+        "name": "originalSender",
+        "type": "address"
       }
     ],
     "name": "vote",

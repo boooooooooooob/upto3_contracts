@@ -924,6 +924,10 @@ export class CreateEventCall__Inputs {
   get when(): BigInt {
     return this._call.inputValues[2].value.toBigInt();
   }
+
+  get originalSender(): Address {
+    return this._call.inputValues[3].value.toAddress();
+  }
 }
 
 export class CreateEventCall__Outputs {
@@ -1357,6 +1361,10 @@ export class VoteCall__Inputs {
 
   get voteYes(): boolean {
     return this._call.inputValues[1].value.toBoolean();
+  }
+
+  get originalSender(): Address {
+    return this._call.inputValues[2].value.toAddress();
   }
 }
 
