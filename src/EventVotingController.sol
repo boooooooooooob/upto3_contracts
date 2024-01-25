@@ -2,6 +2,7 @@
 pragma solidity ^0.8.13;
 
 import "./EventVotingNFT.sol";
+import "./StakingContract.sol";
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
@@ -25,6 +26,8 @@ contract EventVotingController is
 
     mapping(address => uint32) public honorPoint;
 
+    StakingContract public stakingContract;
+
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
@@ -34,6 +37,10 @@ contract EventVotingController is
         eventVotingNFT = EventVotingNFT(_eventVotingNFT);
         __Ownable_init(msg.sender);
         __UUPSUpgradeable_init();
+    }
+
+    function setStakingContract(address _stakingContract) external onlyOwner {
+        stakingContract = StakingContract(_stakingContract);
     }
 
     function createEvent(
