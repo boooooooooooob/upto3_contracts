@@ -17,6 +17,8 @@
 | Event Voting Controller | 0x562d60dA90925Ea3d69Dae1A6A55D440fc144354 |   |   |   |
 | Event Voting Controller Proxy | 0x3289320CD8631B24662800dd167Ac5bb8534dd53 |   |   |   |
 | Upto3 Token | 0xF4bCb898d8EF5816C3b4E58Cce5555633E241B87 |   |   |   |
+| Staking Contract | 0xB866DCbfAaF76ecA00d46309f0f8123Ea6061789 |   |   |   |
+| Staking Contract Proxy | 0x2FC99b4733c4532E6cB5343219Ec27cA0Dcaa76D |   |   |   |
 
 ### Deploy and Verify contracts on Sepolia
 
@@ -112,6 +114,25 @@ forge verify-contract 0xF4bCb898d8EF5816C3b4E58Cce5555633E241B87 src/Upto3Token.
 	--verifier-url 'https://api.routescan.io/v2/network/testnet/evm/168587773/etherscan' \
 	--etherscan-api-key "verifyContract" \
 	--constructor-args $(cast abi-encode "constructor(uint256 param1)" 100000000000000000000000000)
+```
+
+- Staking Contract
+
+```bash
+forge script script/DeployStakingContract.s.sol:DeployStakingContract \
+	--broadcast --rpc-url blast_testnet \
+	--verifier-url 'https://api.routescan.io/v2/network/testnet/evm/168587773/etherscan'\
+	--etherscan-api-key "verifyContract" \
+	--private-key $PRIVATE_KEY
+```
+- Staking Contract Proxy
+
+```bash
+forge script script/DeployStakingContractProxy.s.sol:DeployUUPSProxy \
+	--broadcast --rpc-url blast_testnet \
+	--verifier-url 'https://api.routescan.io/v2/network/testnet/evm/168587773/etherscan'\
+	--etherscan-api-key "verifyContract" \
+	--private-key $PRIVATE_KEY
 ```
 
 ### Publish on TheGraph
