@@ -16,6 +16,7 @@
 | Event Voting NFT Proxy  | 0x1dB31D9b412Eba16D1fBF3E3Df0952202016589f |   |   |   |
 | Event Voting Controller | 0x562d60dA90925Ea3d69Dae1A6A55D440fc144354 |   |   |   |
 | Event Voting Controller Proxy | 0x3289320CD8631B24662800dd167Ac5bb8534dd53 |   |   |   |
+| Upto3 Token | 0xe06FBafFDbc0C2B572816b39255053D51b8F435d |   |   |   |
 
 ### Deploy and Verify contracts on Sepolia
 
@@ -95,6 +96,23 @@ forge script script/DeployEventVotingControllerProxy.s.sol:DeployUUPSProxy \
 --private-key $PRIVATE_KEY
 ```
 
+- Upto3 Token
+
+```bash
+forge create --rpc-url blast_testnet \
+    --constructor-args 1000000000000000000000000000 \
+	--verifier-url 'https://api.routescan.io/v2/network/testnet/evm/168587773/etherscan'\
+    --private-key $PRIVATE_KEY \
+    --etherscan-api-key "verifyContract" \
+    src/Upto3Token.sol:UPTToken
+```
+
+```bash
+forge verify-contract 0xe06FBafFDbc0C2B572816b39255053D51b8F435d src/Upto3Token.sol:UPTToken \
+	--verifier-url 'https://api.routescan.io/v2/network/testnet/evm/168587773/etherscan' \
+	--etherscan-api-key "verifyContract" \
+	--constructor-args $(cast abi-encode "constructor(uint256 param1)" 1000000000000000000000000000)
+```
 
 ### Publish on TheGraph
 

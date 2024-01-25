@@ -8,7 +8,7 @@ contract DeployEventVotingControllerImplementation is Script {
     function run() public {
         // Use address provided in config to broadcast transactions
         vm.startBroadcast();
-        // Deploy the ERC-20 token
+
         EventVotingController implementation = new EventVotingController();
         // Stop broadcasting calls from our address
         vm.stopBroadcast();
