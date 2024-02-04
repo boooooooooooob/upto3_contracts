@@ -17,3 +17,8 @@ type Vote @entity(immutable: true) {
   voter: Bytes
   voteYes: Boolean
 }
+
+input LibraryInputFilter {
+  status: String
+  who: String
+}
