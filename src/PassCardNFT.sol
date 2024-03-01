@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 contract PassCardNFT is ERC721URIStorage {
     using Strings for uint256;
 
-    string public constant TOKEN_URI = "ipfs://<your-ipfs-hash-here>";
+    string public constant TOKEN_URI = "ipfs://QmYGYSzfemBbYhAsWJgMatiPvTviqUq1po9Qbj5GDGDwgX";
     uint256 public tokenCounter;
 
     constructor() ERC721("PassCardNFT", "PCNFT") {
