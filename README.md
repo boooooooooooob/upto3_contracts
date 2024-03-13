@@ -23,7 +23,7 @@
 
 ### Blast mainnet contract addresses
 |  contract | address |   
-|---|---|---|---|---|
+|---|---|
 | PassCard NFT | 0x333f50702DFB7FC32CFccEA9F587326D27c6E214 |   
 | UPT Token | 0x08e0948E952063a6396a24fc59554aC476bEa66e |
 | Token merkle drop | 0x562d60dA90925Ea3d69Dae1A6A55D440fc144354 |
