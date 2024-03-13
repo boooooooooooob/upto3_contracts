@@ -23,3 +23,5 @@ generated/
 
 cache_hardhat/
 artifacts/
+
+lib/
