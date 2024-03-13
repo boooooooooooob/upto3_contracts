@@ -265,7 +265,7 @@ contract TokenMerkleDropTest is Test {
         vm.startPrank(userWithPassCardNFT_261);
 
         bytes memory encodedError = abi.encodeWithSignature(
-            "error ERC20InsufficientBalance(address, uint256, uint256)",
+            "ERC20InsufficientBalance(address,uint256,uint256)",
             address(drop),
             212e18,
             261e18
