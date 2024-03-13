@@ -20,6 +20,13 @@
 | Staking Contract | 0xB866DCbfAaF76ecA00d46309f0f8123Ea6061789 |   |   |   |
 | Staking Contract Proxy | 0x2FC99b4733c4532E6cB5343219Ec27cA0Dcaa76D |   |   |   |
 
+
+### Blast mainnet contract addresses
+|  contract | address |   
+|---|---|---|---|---|
+| PassCard NFT | 0x333f50702DFB7FC32CFccEA9F587326D27c6E214 |   
+| UPT Token | 0x08e0948E952063a6396a24fc59554aC476bEa66e |
+
 ### Deploy and Verify contracts on Sepolia
 
 ```bash

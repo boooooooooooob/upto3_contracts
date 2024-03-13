@@ -20,3 +20,6 @@ node_modules/
 build/
 
 generated/
+
+cache_hardhat/
+artifacts/
