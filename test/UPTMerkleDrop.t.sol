@@ -223,6 +223,15 @@ contract TokenMerkleDropTest is Test {
         vm.stopPrank();
     }
 
+    function test_wrongAmountClaim() public {
+        vm.startPrank(userWithPassCardNFT_211);
+
+        vm.expectRevert(bytes("TokenMerkleDrop: Invalid proof."));
+        drop.claim(212e18, correctProof_211);
+
+        vm.stopPrank();
+    }
+
     function test_alreadyClaimed() public {
         vm.startPrank(userWithPassCardNFT_211);
 
