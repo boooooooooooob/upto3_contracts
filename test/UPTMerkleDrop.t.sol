@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "forge-std/Test.sol";
-import "../src/UPTMerkleDrop.sol";
-import "../src/Upto3Token.sol";
-import "../src/PassCardNFT.sol";
+import {Test} from "forge-std/Test.sol";
+import {Vm} from "forge-std/Vm.sol";
+import {UPTMerkleDrop} from "../src/UPTMerkleDrop.sol";
+import {UPTToken} from "../src/Upto3Token.sol";
+import {PassCardNFT} from "../src/PassCardNFT.sol";
 
-import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import {Upgrades} from "@openzeppelin/foundry-upgrades/src/Upgrades.sol";
 
 contract TokenMerkleDropTest is Test {
-    UPTMerkleDrop private drop;
     UPTToken private token;
     PassCardNFT private passCardNFT;
 
@@ -185,9 +185,7 @@ contract TokenMerkleDropTest is Test {
         )
     ];
 
-    ERC1967Proxy public proxy;
-    UPTMerkleDrop public impl;
-    bytes public data;
+    UPTMerkleDrop public drop;
 
     function setUp() public {
         vm.startPrank(owner);
@@ -195,23 +193,18 @@ contract TokenMerkleDropTest is Test {
         token = new UPTToken(100_000_000e18);
         passCardNFT = new PassCardNFT();
 
-        // drop = new UPTMerkleDrop();
-        // drop.initialize(address(token), address(passCardNFT));
-
-        data = abi.encodeWithSignature(
-            "initialize(address,address)",
-            address(token),
-            address(passCardNFT)
+        address proxy = Upgrades.deployUUPSProxy(
+            "UPTMerkleDrop.sol",
+            abi.encodeCall(
+                UPTMerkleDrop.initialize,
+                (address(token), address(passCardNFT))
+            )
         );
-        impl = new UPTMerkleDrop();
-        proxy = new ERC1967Proxy(address(impl), data);
+        drop = UPTMerkleDrop(proxy);
 
-        // proxy._implementation().setMerkleRoot(correctMerkleRoot);
-        address(proxy).delegatecall(
-            abi.encodeWithSignature("setMerkleRoot(bytes32)", correctMerkleRoot)
-        );
+        drop.setMerkleRoot(correctMerkleRoot);
 
-        token.transfer(address(proxy), 212e18);
+        token.transfer(proxy, 212e18);
 
         vm.stopPrank();
 
@@ -227,15 +220,6 @@ contract TokenMerkleDropTest is Test {
     function test_claim() public {
         vm.startPrank(userWithPassCardNFT_211);
 
-        // proxy._implementation().claim(211e18, correctProof_211);
-        address(proxy).delegatecall(
-            abi.encodeWithSignature(
-                "claim(uint256,bytes32[])",
-                211e18,
-                correctProof_211
-            )
-        );
-
         drop.claim(211e18, correctProof_211);
 
         assertEq(
@@ -243,180 +227,168 @@ contract TokenMerkleDropTest is Test {
             211e18,
             "User should have received token"
         );
-        // assertTrue(
-        //     // proxy._implementation().hasClaimed(userWithPassCardNFT_211),
-        //     address(proxy).delegatecall(
-        //         abi.encodeWithSignature(
-        //             "hasClaimed(address)",
-        //             userWithPassCardNFT_211
-        //         )
-        //     ),
-        //     "Claim flag should be true for user"
-        // );
+        assertTrue(
+            drop.hasClaimed(userWithPassCardNFT_211),
+            "Claim flag should be true for user"
+        );
 
-        // vm.stopPrank();
+        vm.stopPrank();
     }
 
-    // function test_wrongAmountClaim() public {
-    //     vm.startPrank(userWithPassCardNFT_211);
+    function test_wrongAmountClaim() public {
+        vm.startPrank(userWithPassCardNFT_211);
 
-    //     vm.expectRevert(bytes("TokenMerkleDrop: Invalid proof."));
-    //     proxy._implementation().claim(212e18, correctProof_211);
+        vm.expectRevert(bytes("TokenMerkleDrop: Invalid proof."));
+        drop.claim(212e18, correctProof_211);
 
-    //     vm.stopPrank();
-    // }
+        vm.stopPrank();
+    }
 
-    // function test_alreadyClaimed() public {
-    //     vm.startPrank(userWithPassCardNFT_211);
+    function test_alreadyClaimed() public {
+        vm.startPrank(userWithPassCardNFT_211);
 
-    //     proxy._implementation().claim(211e18, correctProof_211);
-    //     assertTrue(
-    //         proxy._implementation().hasClaimed(userWithPassCardNFT_211),
-    //         "Claim flag should be true for user"
-    //     );
+        drop.claim(211e18, correctProof_211);
+        assertTrue(
+            drop.hasClaimed(userWithPassCardNFT_211),
+            "Claim flag should be true for user"
+        );
 
-    //     vm.expectRevert(bytes("TokenMerkleDrop: Drop already claimed."));
-    //     proxy._implementation().claim(211e18, correctProof_211);
+        vm.expectRevert(bytes("TokenMerkleDrop: Drop already claimed."));
+        drop.claim(211e18, correctProof_211);
 
-    //     vm.stopPrank();
-    // }
+        vm.stopPrank();
+    }
 
-    // function test_withoutPassCardNFT() public {
-    //     vm.startPrank(userWithoutPassCardNFT_38);
+    function test_withoutPassCardNFT() public {
+        vm.startPrank(userWithoutPassCardNFT_38);
 
-    //     vm.expectRevert(
-    //         bytes("TokenMerkleDrop: Must own at least one Pass Card NFT.")
-    //     );
-    //     proxy._implementation().claim(38e18, correctProof_38);
+        vm.expectRevert(
+            bytes("TokenMerkleDrop: Must own at least one Pass Card NFT.")
+        );
+        drop.claim(38e18, correctProof_38);
 
-    //     vm.stopPrank();
-    // }
+        vm.stopPrank();
+    }
 
-    // function test_claimWrongProof() public {
-    //     vm.startPrank(userWithPassCardNFT_211);
+    function test_claimWrongProof() public {
+        vm.startPrank(userWithPassCardNFT_211);
 
-    //     bytes32[] memory wrongProof = new bytes32[](1);
-    //     wrongProof[0] = 0x0;
+        bytes32[] memory wrongProof = new bytes32[](1);
+        wrongProof[0] = 0x0;
 
-    //     vm.expectRevert(bytes("TokenMerkleDrop: Invalid proof."));
-    //     proxy._implementation().claim(211e18, wrongProof);
+        vm.expectRevert(bytes("TokenMerkleDrop: Invalid proof."));
+        drop.claim(211e18, wrongProof);
 
-    //     vm.stopPrank();
-    // }
+        vm.stopPrank();
+    }
 
-    // function test_insufficientBalance() public {
-    //     vm.startPrank(userWithPassCardNFT_261);
+    function test_insufficientBalance() public {
+        vm.startPrank(userWithPassCardNFT_261);
 
-    //     bytes memory encodedError = abi.encodeWithSignature(
-    //         "ERC20InsufficientBalance(address,uint256,uint256)",
-    //         address(proxy),
-    //         212e18,
-    //         261e18
-    //     );
-    //     vm.expectRevert(encodedError);
-    //     proxy._implementation().claim(261e18, correctProof_261);
+        bytes memory encodedError = abi.encodeWithSignature(
+            "ERC20InsufficientBalance(address,uint256,uint256)",
+            address(drop),
+            212e18,
+            261e18
+        );
+        vm.expectRevert(encodedError);
+        drop.claim(261e18, correctProof_261);
 
-    //     vm.stopPrank();
-    // }
+        vm.stopPrank();
+    }
 
-    // function teste_updateMerkleRoot() public {
-    //     vm.startPrank(owner);
+    function teste_updateMerkleRoot() public {
+        vm.startPrank(owner);
 
-    //     proxy._implementation().setMerkleRoot(0x0);
-    //     assertEq(
-    //         proxy._implementation().merkleRoot(),
-    //         0x0,
-    //         "Merkle root should have been updated"
-    //     );
+        drop.setMerkleRoot(0x0);
+        assertEq(
+            drop.merkleRoot(),
+            0x0,
+            "Merkle root should have been updated"
+        );
 
-    //     vm.stopPrank();
-    // }
+        vm.stopPrank();
+    }
 
-    // function test_updateMerkleRootNotOwner() public {
-    //     vm.startPrank(userWithPassCardNFT_211);
-    //     bytes memory encodedError = abi.encodeWithSignature(
-    //         "OwnableUnauthorizedAccount(address)",
-    //         userWithPassCardNFT_211
-    //     );
-    //     vm.expectRevert(encodedError);
-    //     proxy._implementation().setMerkleRoot(0x0);
+    function test_updateMerkleRootNotOwner() public {
+        vm.startPrank(userWithPassCardNFT_211);
+        bytes memory encodedError = abi.encodeWithSignature(
+            "OwnableUnauthorizedAccount(address)",
+            userWithPassCardNFT_211
+        );
+        vm.expectRevert(encodedError);
+        drop.setMerkleRoot(0x0);
 
-    //     vm.stopPrank();
-    // }
+        vm.stopPrank();
+    }
 
-    // function test_pauseAndUnpause() public {
-    //     vm.startPrank(owner);
-    //     proxy._implementation().pause();
-    //     assertTrue(
-    //         proxy._implementation().paused(),
-    //         "Contract should be paused"
-    //     );
+    function test_pauseAndUnpause() public {
+        vm.startPrank(owner);
+        drop.pause();
+        assertTrue(drop.paused(), "Contract should be paused");
 
-    //     proxy._implementation().unpause();
-    //     assertFalse(
-    //         proxy._implementation().paused(),
-    //         "Contract should be unpaused"
-    //     );
-    //     vm.stopPrank();
-    // }
+        drop.unpause();
+        assertFalse(drop.paused(), "Contract should be unpaused");
+        vm.stopPrank();
+    }
 
-    // function test_pauseAndUnpauseNotOwner() public {
-    //     vm.startPrank(userWithPassCardNFT_211);
-    //     bytes memory encodedError = abi.encodeWithSignature(
-    //         "OwnableUnauthorizedAccount(address)",
-    //         userWithPassCardNFT_211
-    //     );
-    //     vm.expectRevert(encodedError);
-    //     proxy._implementation().pause();
-    //     vm.stopPrank();
+    function test_pauseAndUnpauseNotOwner() public {
+        vm.startPrank(userWithPassCardNFT_211);
+        bytes memory encodedError = abi.encodeWithSignature(
+            "OwnableUnauthorizedAccount(address)",
+            userWithPassCardNFT_211
+        );
+        vm.expectRevert(encodedError);
+        drop.pause();
+        vm.stopPrank();
 
-    //     vm.startPrank(owner);
-    //     proxy._implementation().pause();
-    //     vm.stopPrank();
+        vm.startPrank(owner);
+        drop.pause();
+        vm.stopPrank();
 
-    //     vm.startPrank(userWithPassCardNFT_211);
-    //     vm.expectRevert(encodedError);
-    //     proxy._implementation().unpause();
-    //     vm.stopPrank();
-    // }
+        vm.startPrank(userWithPassCardNFT_211);
+        vm.expectRevert(encodedError);
+        drop.unpause();
+        vm.stopPrank();
+    }
 
-    // function test_withdrawTokens() public {
-    //     assertEq(
-    //         token.balanceOf(owner),
-    //         99_999_788e18,
-    //         "Owner should have 99,999,788 tokens"
-    //     );
+    function test_withdrawTokens() public {
+        assertEq(
+            token.balanceOf(owner),
+            99_999_788e18,
+            "Owner should have 99,999,788 tokens"
+        );
 
-    //     vm.startPrank(owner);
-    //     proxy._implementation().pause();
-    //     proxy._implementation().withdrawTokens(owner);
-    //     assertEq(
-    //         token.balanceOf(owner),
-    //         100_000_000e18,
-    //         "Owner should have withdrawn all tokens"
-    //     );
-    //     vm.stopPrank();
-    // }
+        vm.startPrank(owner);
+        drop.pause();
+        drop.withdrawTokens(owner);
+        assertEq(
+            token.balanceOf(owner),
+            100_000_000e18,
+            "Owner should have withdrawn all tokens"
+        );
+        vm.stopPrank();
+    }
 
-    // function test_withdrawTokensNotPaused() public {
-    //     vm.startPrank(owner);
-    //     vm.expectRevert(bytes("TokenMerkleDrop: Contract is not paused."));
-    //     proxy._implementation().withdrawTokens(owner);
-    //     vm.stopPrank();
-    // }
+    function test_withdrawTokensNotPaused() public {
+        vm.startPrank(owner);
+        vm.expectRevert(bytes("TokenMerkleDrop: Contract is not paused."));
+        drop.withdrawTokens(owner);
+        vm.stopPrank();
+    }
 
-    // function test_withdrawTokensNotOwner() public {
-    //     vm.startPrank(owner);
-    //     proxy._implementation().pause();
-    //     vm.stopPrank();
+    function test_withdrawTokensNotOwner() public {
+        vm.startPrank(owner);
+        drop.pause();
+        vm.stopPrank();
 
-    //     vm.startPrank(userWithPassCardNFT_211);
-    //     bytes memory encodedError = abi.encodeWithSignature(
-    //         "OwnableUnauthorizedAccount(address)",
-    //         userWithPassCardNFT_211
-    //     );
-    //     vm.expectRevert(encodedError);
-    //     proxy._implementation().withdrawTokens(owner);
-    //     vm.stopPrank();
-    // }
+        vm.startPrank(userWithPassCardNFT_211);
+        bytes memory encodedError = abi.encodeWithSignature(
+            "OwnableUnauthorizedAccount(address)",
+            userWithPassCardNFT_211
+        );
+        vm.expectRevert(encodedError);
+        drop.withdrawTokens(owner);
+        vm.stopPrank();
+    }
 }
