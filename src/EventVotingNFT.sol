@@ -51,6 +51,7 @@ contract EventVotingNFT is
 
     mapping(uint256 => Event) public events;
     mapping(uint256 => mapping(address => bool)) public hasVoted;
+    mapping(uint256 => mapping(address => bool)) public votedResult;
     mapping(bytes32 => bool) private uniqueEvents;
 
     event EventCreated(
@@ -108,7 +109,7 @@ contract EventVotingNFT is
             "Event creator cannot vote."
         );
 
-        // TODO: Can only vote if the event is still open(Created, Passed, Failed, ReOpened, Cancelled)
+        // TODO: Can only vote if the event is still open(Created, Passed, Failed, Pending, ReOpened, Cancelled)
 
         if (voteYes) {
             events[eventId].yesVotes += 1;
@@ -116,6 +117,7 @@ contract EventVotingNFT is
             events[eventId].noVotes += 1;
         }
         hasVoted[eventId][originalSender] = true;
+        votedResult[eventId][originalSender] = voteYes;
 
         emit Voted(eventId, voteYes, originalSender);
     }

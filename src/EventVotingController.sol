@@ -7,6 +7,9 @@ import "./StakingContract.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+import {RedStarEnergy} from "./RedStarEnergy.sol";
 
 contract EventVotingController is
     Initializable,
@@ -24,19 +27,43 @@ contract EventVotingController is
     mapping(address => uint32) public lastVoteTime;
     mapping(address => uint32) public voteCount;
 
-    mapping(address => uint32) public honorPoint;
+    mapping(address => uint256) public honorPoint;
 
     StakingContract public stakingContract;
+
+    RedStarEnergy public redStarEnergy;
+    IERC20 public UPTToken;
+
+    // vote consumption on the energy
+    uint256 public constant voteConsumption = 1;
+    uint256 public constant createEventConsumption = 5;
+
+    uint256 public constant honorPointFreezePerVote = 2;
+    uint256 public constant honorPointFreezePerCreateEvent = 4;
+
+    uint256 public constant honorPointAwardPerVote = 3;
+    uint256 public constant honorPointAwardPerCreateEvent = 7;
+
+    uint256 public constant UPTTokenAwardPerVote = 3e18;
+
+    mapping(uint32 => mapping(address => bool)) public hasClaimedHonorPoint;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
     }
 
-    function initialize(address _eventVotingNFT) public initializer {
-        eventVotingNFT = EventVotingNFT(_eventVotingNFT);
+    function initialize(
+        address _eventVotingNFT,
+        address _redStarEnergy,
+        address _UPTToken
+    ) public initializer {
         __Ownable_init(msg.sender);
         __UUPSUpgradeable_init();
+
+        eventVotingNFT = EventVotingNFT(_eventVotingNFT);
+        redStarEnergy = RedStarEnergy(_redStarEnergy);
+        UPTToken = IERC20(_UPTToken);
     }
 
     function setStakingContract(address _stakingContract) external onlyOwner {
@@ -47,8 +74,8 @@ contract EventVotingController is
         string memory who,
         string memory what,
         uint32 when
-    ) public {
-        require(canCreateEvent(msg.sender), "Event limit reached for today");
+    ) public onlyOwner {
+        // require(canCreateEvent(msg.sender), "Event limit reached for today");
 
         // TODO: Verify 'who' is in the allowed list using the Merkle tree
         // require(isValidWho(who, merkleProof), "Invalid 'who', not in the list");
@@ -67,7 +94,7 @@ contract EventVotingController is
 
         eventVotingNFT.createEvent(who, what, when, msg.sender);
 
-        updateCreateEventCount(msg.sender);
+        // updateCreateEventCount(msg.sender);
     }
 
     function canCreateEvent(address user) public view returns (bool) {
@@ -88,6 +115,27 @@ contract EventVotingController is
 
     function vote(uint32 eventId, bool voteYes) public {
         require(canVote(msg.sender), "Vote limit reached for today");
+        require(
+            honorPoint[msg.sender] >= honorPointFreezePerVote,
+            "Not enough honor point to vote"
+        );
+
+        // event must be in pending or created state
+        require(
+            keccak256(abi.encodePacked(getEventVotingStatus(eventId))) ==
+                keccak256(abi.encodePacked("Pending")) ||
+                keccak256(abi.encodePacked(getEventVotingStatus(eventId))) ==
+                keccak256(abi.encodePacked("Created")),
+            "Event is not in pending or created state"
+        );
+
+        redStarEnergy.burnFrom(msg.sender, voteConsumption);
+
+        if (lastVoteTime[msg.sender] == 0) {
+            honorPoint[msg.sender] = 100;
+        }
+
+        honorPoint[msg.sender] -= honorPointFreezePerVote;
 
         eventVotingNFT.vote(eventId, voteYes, msg.sender);
 
@@ -107,6 +155,58 @@ contract EventVotingController is
             lastVoteTime[user] = uint32(block.timestamp);
         } else {
             voteCount[user]++;
+        }
+    }
+
+    function claimHonorPointAndUPT(uint32 eventId) public {
+        require(eventVotingNFT.hasVoted(eventId, msg.sender), "Not voted yet");
+
+        require(
+            !hasClaimedHonorPoint[eventId][msg.sender],
+            "Honor point already claimed"
+        );
+
+        bool result = eventVotingNFT.votedResult(eventId, msg.sender);
+        // if voted yes and the event is passed then claim honor point
+        // if voted no and the event is failed then claim honor point
+        if (
+            (result &&
+                keccak256(abi.encodePacked(getEventVotingStatus(eventId))) ==
+                keccak256(abi.encodePacked("Passed"))) ||
+            (!result &&
+                keccak256(abi.encodePacked(getEventVotingStatus(eventId))) ==
+                keccak256(abi.encodePacked("Failed")))
+        ) {
+            hasClaimedHonorPoint[eventId][msg.sender] = true;
+            honorPoint[msg.sender] += honorPointAwardPerVote;
+
+            UPTToken.transfer(msg.sender, UPTTokenAwardPerVote);
+        } else {
+            revert("Not eligible to claim honor point");
+        }
+    }
+
+    function getEventVotingStatus(
+        uint32 eventId
+    ) public view returns (string memory) {
+        (, , , , uint256 yesVotes, uint256 noVotes) = eventVotingNFT.getEvent(
+            eventId
+        );
+
+        // if yesVotes + noVotes > 200 and yesVotes / (yesVotes + noVotes) > 0.7 then return "Passed"
+        // if yesVotes + noVotes > 200 and yesVotes / (yesVotes + noVotes) < 0.3 then return "Failed"
+        // if yesVotes + noVotes > 200 and yesVotes / (yesVotes + noVotes) >= 0.3 and yesVotes / (yesVotes + noVotes) <= 0.7 then return "Pending"
+        // if yesVotes + noVotes <= 200 then return "Created
+        if (yesVotes + noVotes > 200) {
+            if ((yesVotes * 100) / (yesVotes + noVotes) > 70) {
+                return "Passed";
+            } else if ((yesVotes * 100) / (yesVotes + noVotes) < 30) {
+                return "Failed";
+            } else {
+                return "Pending";
+            }
+        } else {
+            return "Created";
         }
     }
 
