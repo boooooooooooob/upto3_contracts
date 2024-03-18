@@ -1,13 +1,40 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
-contract UPTMerkleDrop is Ownable, Pausable {
+interface IBlast {
+    // Note: the full interface for IBlast can be found below
+    function configureClaimableGas() external;
+    function claimAllGas(
+        address contractAddress,
+        address recipient
+    ) external returns (uint256);
+
+    function claimMaxGas(
+        address contractAddress,
+        address recipient
+    ) external returns (uint256);
+
+    function claimGasAtMinClaimRate(
+        address contractAddress,
+        address recipient,
+        uint256 minClaimRateBips
+    ) external returns (uint256);
+}
+
+contract UPTMerkleDrop is
+    Initializable,
+    OwnableUpgradeable,
+    PausableUpgradeable,
+    UUPSUpgradeable
+{
     IERC20 public token;
     bytes32 public merkleRoot;
     IERC721 public passCardNFT;
@@ -17,9 +44,26 @@ contract UPTMerkleDrop is Ownable, Pausable {
     event Claimed(address indexed claimant, uint256 amount);
     event MerkleRootUpdated(bytes32 merkleRoot);
 
-    constructor(IERC20 _token, IERC721 _passCardNFT) Ownable(msg.sender) {
-        token = _token;
-        passCardNFT = _passCardNFT;
+    IBlast public constant BLAST =
+        IBlast(0x4300000000000000000000000000000000000002);
+
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
+    function initialize(
+        address _token,
+        address _passCardNFT
+    ) public initializer {
+        __Ownable_init(msg.sender);
+        __Pausable_init();
+        __UUPSUpgradeable_init();
+
+        token = IERC20(_token);
+        passCardNFT = IERC721(_passCardNFT);
+
+        // BLAST.configureClaimableGas();
     }
 
     function setMerkleRoot(bytes32 _merkleRoot) external onlyOwner {
@@ -83,4 +127,12 @@ contract UPTMerkleDrop is Ownable, Pausable {
             "TokenMerkleDrop: Withdraw failed."
         );
     }
+
+    function claimMyContractsGas() external {
+        BLAST.claimMaxGas(address(this), msg.sender);
+    }
+
+    function _authorizeUpgrade(
+        address newImplementation
+    ) internal override onlyOwner {}
 }
