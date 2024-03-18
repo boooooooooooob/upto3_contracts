@@ -6,6 +6,7 @@ import {Vm} from "forge-std/Vm.sol";
 import {UPTMerkleDrop} from "../src/UPTMerkleDrop.sol";
 import {UPTToken} from "../src/Upto3Token.sol";
 import {PassCardNFT} from "../src/PassCardNFT.sol";
+import {Blast} from "../src/reference/Blast.sol";
 
 import {Upgrades} from "@openzeppelin/foundry-upgrades/src/Upgrades.sol";
 
@@ -192,12 +193,13 @@ contract TokenMerkleDropTest is Test {
 
         token = new UPTToken(100_000_000e18);
         passCardNFT = new PassCardNFT();
+        Blast blast = new Blast();
 
         address proxy = Upgrades.deployUUPSProxy(
             "UPTMerkleDrop.sol",
             abi.encodeCall(
                 UPTMerkleDrop.initialize,
-                (address(token), address(passCardNFT))
+                (address(token), address(passCardNFT), address(blast))
             )
         );
         drop = UPTMerkleDrop(proxy);

@@ -44,17 +44,18 @@ contract UPTMerkleDrop is
     event Claimed(address indexed claimant, uint256 amount);
     event MerkleRootUpdated(bytes32 merkleRoot);
 
-    IBlast public constant BLAST =
-        IBlast(0x4300000000000000000000000000000000000002);
+    IBlast public BLAST;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
     }
 
+    // BLAST: 0x4300000000000000000000000000000000000002
     function initialize(
         address _token,
-        address _passCardNFT
+        address _passCardNFT,
+        address _blast
     ) public initializer {
         __Ownable_init(msg.sender);
         __Pausable_init();
@@ -63,7 +64,8 @@ contract UPTMerkleDrop is
         token = IERC20(_token);
         passCardNFT = IERC721(_passCardNFT);
 
-        // BLAST.configureClaimableGas();
+        BLAST = IBlast(_blast);
+        BLAST.configureClaimableGas();
     }
 
     function setMerkleRoot(bytes32 _merkleRoot) external onlyOwner {
