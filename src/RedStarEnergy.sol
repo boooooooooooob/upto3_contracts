@@ -64,12 +64,12 @@ contract RedStarEnergy is
 
     // swap 2e18 UPT for 1 RSE
     function swap(uint256 amount) public {
+        // limit the amount to be multiplied by the swap rate
+        require(amount % swapRate == 0, "Invalid amount");
         require(
             UPTToken.transferFrom(msg.sender, address(this), amount),
             "UPT transfer failed"
         );
-        // limit the amount to be multiplied by the swap rate
-        require(amount % swapRate == 0, "Invalid amount");
 
         _mint(msg.sender, amount / swapRate);
 
