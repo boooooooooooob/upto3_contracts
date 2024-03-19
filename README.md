@@ -27,6 +27,7 @@
 | PassCard NFT | 0x333f50702DFB7FC32CFccEA9F587326D27c6E214 |   
 | UPT Token | 0x08e0948E952063a6396a24fc59554aC476bEa66e |
 | Token merkle drop | 0x562d60dA90925Ea3d69Dae1A6A55D440fc144354 |
+| Red Star Energy | 0xB05a3b113957757BD03E3ba35C1D242861199194 |
 
 ### Deploy and Verify contracts on Sepolia
 

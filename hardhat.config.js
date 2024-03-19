@@ -1,5 +1,6 @@
 require('@nomicfoundation/hardhat-toolbox')
 require('@nomicfoundation/hardhat-foundry')
+require('@openzeppelin/hardhat-upgrades')
 
 require('dotenv').config()
 
