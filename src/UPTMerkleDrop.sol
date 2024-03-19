@@ -130,11 +130,11 @@ contract UPTMerkleDrop is
         );
     }
 
-    function claimMyContractsGas() external {
-        BLAST.claimMaxGas(address(this), msg.sender);
-    }
-
     function _authorizeUpgrade(
         address newImplementation
     ) internal override onlyOwner {}
+
+    function claimMyContractsGas() external {
+        BLAST.claimMaxGas(address(this), msg.sender);
+    }
 }

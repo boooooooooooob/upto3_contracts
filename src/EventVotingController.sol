@@ -48,6 +48,8 @@ contract EventVotingController is
 
     mapping(uint32 => mapping(address => bool)) public hasClaimedHonorPoint;
 
+    IBlast public BLAST;
+
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
@@ -56,7 +58,8 @@ contract EventVotingController is
     function initialize(
         address _eventVotingNFT,
         address _redStarEnergy,
-        address _UPTToken
+        address _UPTToken,
+        address _blast
     ) public initializer {
         __Ownable_init(msg.sender);
         __UUPSUpgradeable_init();
@@ -64,6 +67,9 @@ contract EventVotingController is
         eventVotingNFT = EventVotingNFT(_eventVotingNFT);
         redStarEnergy = RedStarEnergy(_redStarEnergy);
         UPTToken = IERC20(_UPTToken);
+
+        BLAST = IBlast(_blast);
+        BLAST.configureClaimableGas();
     }
 
     function setStakingContract(address _stakingContract) external onlyOwner {
@@ -223,4 +229,8 @@ contract EventVotingController is
     function _authorizeUpgrade(
         address newImplementation
     ) internal override onlyOwner {}
+
+    function claimMyContractsGas() external {
+        BLAST.claimMaxGas(address(this), msg.sender);
+    }
 }

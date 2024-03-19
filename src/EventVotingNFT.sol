@@ -8,6 +8,26 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 
+interface IBlast {
+    // Note: the full interface for IBlast can be found below
+    function configureClaimableGas() external;
+    function claimAllGas(
+        address contractAddress,
+        address recipient
+    ) external returns (uint256);
+
+    function claimMaxGas(
+        address contractAddress,
+        address recipient
+    ) external returns (uint256);
+
+    function claimGasAtMinClaimRate(
+        address contractAddress,
+        address recipient,
+        uint256 minClaimRateBips
+    ) external returns (uint256);
+}
+
 contract EventVotingNFT is
     Initializable,
     ERC721Upgradeable,
@@ -15,31 +35,6 @@ contract EventVotingNFT is
     AccessControlUpgradeable,
     UUPSUpgradeable
 {
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
-        _disableInitializers();
-    }
-
-    bytes32 public constant CONTROLLER_ROLE = keccak256("CONTROLLER_ROLE");
-
-    function initialize() public initializer {
-        __ERC721_init("EventVotingNFT", "EVNFT");
-        __Ownable_init(msg.sender);
-        __AccessControl_init();
-        __UUPSUpgradeable_init();
-    }
-
-    function supportsInterface(
-        bytes4 interfaceId
-    )
-        public
-        view
-        override(ERC721Upgradeable, AccessControlUpgradeable)
-        returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
-    }
-
     struct Event {
         string who;
         string what;
@@ -54,6 +49,17 @@ contract EventVotingNFT is
     mapping(uint256 => mapping(address => bool)) public votedResult;
     mapping(bytes32 => bool) private uniqueEvents;
 
+    bytes32 public constant CONTROLLER_ROLE = keccak256("CONTROLLER_ROLE");
+
+    uint256 private _nextTokenId;
+
+    IBlast public BLAST;
+
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
     event EventCreated(
         uint256 eventId,
         string who,
@@ -63,7 +69,26 @@ contract EventVotingNFT is
     );
     event Voted(uint256 eventId, bool vote, address voter);
 
-    uint256 private _nextTokenId;
+    function initialize(address _blast) public initializer {
+        __ERC721_init("EventVotingNFT", "EVNFT");
+        __Ownable_init(msg.sender);
+        __AccessControl_init();
+        __UUPSUpgradeable_init();
+
+        BLAST = IBlast(_blast);
+        BLAST.configureClaimableGas();
+    }
+
+    function supportsInterface(
+        bytes4 interfaceId
+    )
+        public
+        view
+        override(ERC721Upgradeable, AccessControlUpgradeable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
 
     function grantControllerRole(address account) public onlyOwner {
         _grantRole(CONTROLLER_ROLE, account);
@@ -108,8 +133,6 @@ contract EventVotingNFT is
             events[eventId].creator != originalSender,
             "Event creator cannot vote."
         );
-
-        // TODO: Can only vote if the event is still open(Created, Passed, Failed, Pending, ReOpened, Cancelled)
 
         if (voteYes) {
             events[eventId].yesVotes += 1;
@@ -237,4 +260,8 @@ contract EventVotingNFT is
     function _authorizeUpgrade(
         address newImplementation
     ) internal override onlyOwner {}
+
+    function claimMyContractsGas() external {
+        BLAST.claimMaxGas(address(this), msg.sender);
+    }
 }

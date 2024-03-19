@@ -7,6 +7,26 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
+interface IBlast {
+    // Note: the full interface for IBlast can be found below
+    function configureClaimableGas() external;
+    function claimAllGas(
+        address contractAddress,
+        address recipient
+    ) external returns (uint256);
+
+    function claimMaxGas(
+        address contractAddress,
+        address recipient
+    ) external returns (uint256);
+
+    function claimGasAtMinClaimRate(
+        address contractAddress,
+        address recipient,
+        uint256 minClaimRateBips
+    ) external returns (uint256);
+}
+
 contract RedStarEnergy is
     Initializable,
     UUPSUpgradeable,
@@ -16,6 +36,8 @@ contract RedStarEnergy is
     IERC20 public UPTToken;
     uint256 public swapRate;
 
+    IBlast public BLAST;
+
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
@@ -24,13 +46,16 @@ contract RedStarEnergy is
     event Swap(address indexed from, uint256 amount, uint256 rate);
     event Burn(address indexed from, uint256 amount);
 
-    function initialize(address _UPTToken) public initializer {
+    function initialize(address _UPTToken, address _blast) public initializer {
         __ERC20_init("Red Star Energy", "RSE");
         __Ownable_init(msg.sender);
         __UUPSUpgradeable_init();
 
         UPTToken = IERC20(_UPTToken);
         swapRate = 2e18;
+
+        BLAST = IBlast(_blast);
+        BLAST.configureClaimableGas();
     }
 
     function decimals() public view virtual override returns (uint8) {
@@ -88,4 +113,8 @@ contract RedStarEnergy is
     function _authorizeUpgrade(
         address newImplementation
     ) internal override onlyOwner {}
+
+    function claimMyContractsGas() external {
+        BLAST.claimMaxGas(address(this), msg.sender);
+    }
 }
