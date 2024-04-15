@@ -1,0 +1,26 @@
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: EventVotingNFT
+    network: blast-mainnet
+    source:
+      address: "0x8bc67D8BF0dBB3Dcd0d7dF0Aff55f2c3D661d2f6"
+      abi: EventVotingNFT
+      startBlock: 2170060
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Upgraded
+      abis:
+        - name: EventVotingNFT
+          file: ./abis/EventVotingNFT.json
+      eventHandlers:
+        - event: Upgraded(indexed address)
+          handler: handleUpgraded
+      file: ./src/event-voting-nft.ts
