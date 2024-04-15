@@ -28,6 +28,8 @@
 | UPT Token | 0x08e0948E952063a6396a24fc59554aC476bEa66e |
 | Token merkle drop | 0x562d60dA90925Ea3d69Dae1A6A55D440fc144354 |
 | Red Star Energy | 0xB05a3b113957757BD03E3ba35C1D242861199194 |
+| Event Voting NFT | 0x8bc67D8BF0dBB3Dcd0d7dF0Aff55f2c3D661d2f6 |
+| Event Voting Controller |  | 
 
 ### Deploy and Verify contracts on Sepolia
 

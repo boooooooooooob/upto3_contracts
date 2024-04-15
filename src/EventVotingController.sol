@@ -19,7 +19,7 @@ contract EventVotingController is
     EventVotingNFT public eventVotingNFT;
 
     uint32 public constant MAX_CREATE_EVENT_PER_DAY = 5;
-    uint32 public constant MAX_VOTE_PER_DAY = 5;
+    uint32 public constant MAX_VOTE_PER_DAY = 3;
     uint32 public constant DAY_IN_SECONDS = 86400;
 
     mapping(address => uint32) public lastCreateEventTime;
