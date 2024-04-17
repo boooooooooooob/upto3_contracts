@@ -121,6 +121,9 @@ contract EventVotingController is
 
     function vote(uint32 eventId, bool voteYes) public {
         require(canVote(msg.sender), "Vote limit reached for today");
+        if (lastVoteTime[msg.sender] == 0) {
+            honorPoint[msg.sender] = 100;
+        }
         require(
             honorPoint[msg.sender] >= honorPointFreezePerVote,
             "Not enough honor point to vote"
@@ -136,10 +139,6 @@ contract EventVotingController is
         );
 
         redStarEnergy.burnFrom(msg.sender, voteConsumption);
-
-        if (lastVoteTime[msg.sender] == 0) {
-            honorPoint[msg.sender] = 100;
-        }
 
         honorPoint[msg.sender] -= honorPointFreezePerVote;
 

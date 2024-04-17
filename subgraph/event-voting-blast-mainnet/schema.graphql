@@ -1,7 +1,24 @@
-type Upgraded @entity(immutable: true) {
-  id: Bytes!
-  implementation: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+type EventVotingNFT @entity {
+  id: ID!
+  who: String
+  what: String
+  when: BigInt
+  creator: Bytes
+  yes: Int
+  no: Int
+  status: String
+  votes: [Vote!]! @derivedFrom(field: "eventVotingNFT")
+}
+
+type Vote @entity(immutable: true) {
+  id: ID!
+  eventVotingNFT: EventVotingNFT!
+  eventVotingNFTId: String!
+  voter: Bytes
+  voteYes: Boolean
+}
+
+input LibraryInputFilter {
+  status: String
+  who: String
 }
