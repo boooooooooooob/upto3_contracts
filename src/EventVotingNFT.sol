@@ -262,6 +262,10 @@ contract EventVotingNFT is
     ) internal override onlyOwner {}
 
     function claimMyContractsGas() external {
+        require(
+            msg.sender == owner(),
+            "TokenMerkleDrop: Only owner can claim gas."
+        );
         BLAST.claimMaxGas(address(this), msg.sender);
     }
 }
