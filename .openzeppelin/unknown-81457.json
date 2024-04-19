@@ -810,7 +810,7 @@
             "label": "eventVotingNFT",
             "offset": 0,
             "slot": "0",
-            "type": "t_contract(EventVotingNFT)6850",
+            "type": "t_contract(EventVotingNFT)6859",
             "contract": "EventVotingController",
             "src": "src/EventVotingController.sol:19"
           },
@@ -858,7 +858,7 @@
             "label": "stakingContract",
             "offset": 0,
             "slot": "6",
-            "type": "t_contract(StakingContract)7318",
+            "type": "t_contract(StakingContract)7336",
             "contract": "EventVotingController",
             "src": "src/EventVotingController.sol:32"
           },
@@ -866,7 +866,7 @@
             "label": "redStarEnergy",
             "offset": 0,
             "slot": "7",
-            "type": "t_contract(RedStarEnergy)7165",
+            "type": "t_contract(RedStarEnergy)7183",
             "contract": "EventVotingController",
             "src": "src/EventVotingController.sol:34"
           },
@@ -938,7 +938,7 @@
             "label": "uint64",
             "numberOfBytes": "8"
           },
-          "t_contract(EventVotingNFT)6850": {
+          "t_contract(EventVotingNFT)6859": {
             "label": "contract EventVotingNFT",
             "numberOfBytes": "20"
           },
@@ -950,11 +950,11 @@
             "label": "contract IERC20",
             "numberOfBytes": "20"
           },
-          "t_contract(RedStarEnergy)7165": {
+          "t_contract(RedStarEnergy)7183": {
             "label": "contract RedStarEnergy",
             "numberOfBytes": "20"
           },
-          "t_contract(StakingContract)7318": {
+          "t_contract(StakingContract)7336": {
             "label": "contract StakingContract",
             "numberOfBytes": "20"
           },
@@ -1719,6 +1719,221 @@
               "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:38",
               "offset": 0,
               "slot": "5"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    },
+    "2f090c2a75e000541a85fad36d6478b8e8aaa9a37205e7839ffeec1eb0b50567": {
+      "address": "0xe56f4AD9Bb7F17FabF3C43a1305FB753622e55f5",
+      "txHash": "0xa81614d184dd7629b28b8f3588dfb3bb35d64650d104ff46a114b61e1ab2576a",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "eventVotingNFT",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_contract(EventVotingNFT)6898",
+            "contract": "EventVotingController",
+            "src": "src/EventVotingController.sol:27"
+          },
+          {
+            "label": "lastCreateEventTime",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_mapping(t_address,t_uint32)",
+            "contract": "EventVotingController",
+            "src": "src/EventVotingController.sol:33"
+          },
+          {
+            "label": "createEventCount",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_mapping(t_address,t_uint32)",
+            "contract": "EventVotingController",
+            "src": "src/EventVotingController.sol:34"
+          },
+          {
+            "label": "lastVoteTime",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_mapping(t_address,t_uint32)",
+            "contract": "EventVotingController",
+            "src": "src/EventVotingController.sol:35"
+          },
+          {
+            "label": "voteCount",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_mapping(t_address,t_uint32)",
+            "contract": "EventVotingController",
+            "src": "src/EventVotingController.sol:36"
+          },
+          {
+            "label": "honorPoint",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "EventVotingController",
+            "src": "src/EventVotingController.sol:38"
+          },
+          {
+            "label": "stakingContract",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_contract(StakingContract)7375",
+            "contract": "EventVotingController",
+            "src": "src/EventVotingController.sol:40"
+          },
+          {
+            "label": "redStarEnergy",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_contract(RedStarEnergy)7222",
+            "contract": "EventVotingController",
+            "src": "src/EventVotingController.sol:42"
+          },
+          {
+            "label": "UPTToken",
+            "offset": 0,
+            "slot": "8",
+            "type": "t_contract(IERC20)3578",
+            "contract": "EventVotingController",
+            "src": "src/EventVotingController.sol:43"
+          },
+          {
+            "label": "hasClaimedHonorPoint",
+            "offset": 0,
+            "slot": "9",
+            "type": "t_mapping(t_uint32,t_mapping(t_address,t_bool))",
+            "contract": "EventVotingController",
+            "src": "src/EventVotingController.sol:57"
+          },
+          {
+            "label": "BLAST",
+            "offset": 0,
+            "slot": "10",
+            "type": "t_contract(IBlast)6348",
+            "contract": "EventVotingController",
+            "src": "src/EventVotingController.sol:59"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)147_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(OwnableStorage)97_storage": {
+            "label": "struct OwnableUpgradeable.OwnableStorage",
+            "members": [
+              {
+                "label": "_owner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_contract(EventVotingNFT)6898": {
+            "label": "contract EventVotingNFT",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IBlast)6348": {
+            "label": "contract IBlast",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IERC20)3578": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(RedStarEnergy)7222": {
+            "label": "contract RedStarEnergy",
+            "numberOfBytes": "20"
+          },
+          "t_contract(StakingContract)7375": {
+            "label": "contract StakingContract",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint32)": {
+            "label": "mapping(address => uint32)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint32,t_mapping(t_address,t_bool))": {
+            "label": "mapping(uint32 => mapping(address => bool))",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint32": {
+            "label": "uint32",
+            "numberOfBytes": "4"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Ownable": [
+            {
+              "contract": "OwnableUpgradeable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:24",
+              "offset": 0,
+              "slot": "0"
             }
           ],
           "erc7201:openzeppelin.storage.Initializable": [
