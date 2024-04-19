@@ -15,6 +15,11 @@
       "address": "0x35d147377D2e5921CaA5b910c33B99c893C84Ee4",
       "txHash": "0xc5fbe1c5f558c009c547aa1fa1b373ea2c57b6e3f1dcc238721d84fb725aa3ea",
       "kind": "uups"
+    },
+    {
+      "address": "0x07a9dA97DbBBB57F83C7c1390dafa13fdB20Ce5e",
+      "txHash": "0xf5cf112bc63467d69f1cb038a6a893a1d572a07a307edbf9b14eb678821ec194",
+      "kind": "uups"
     }
   ],
   "impls": {
@@ -28,7 +33,7 @@
             "label": "UPTToken",
             "offset": 0,
             "slot": "0",
-            "type": "t_contract(IERC20)4301",
+            "type": "t_contract(IERC20)3578",
             "contract": "RedStarEnergy",
             "src": "src/RedStarEnergy.sol:36"
           },
@@ -44,7 +49,7 @@
             "label": "BLAST",
             "offset": 0,
             "slot": "2",
-            "type": "t_contract(IBlast)9429",
+            "type": "t_contract(IBlast)6890",
             "contract": "RedStarEnergy",
             "src": "src/RedStarEnergy.sol:39"
           }
@@ -144,11 +149,11 @@
             "label": "uint64",
             "numberOfBytes": "8"
           },
-          "t_contract(IBlast)9429": {
+          "t_contract(IBlast)6890": {
             "label": "contract IBlast",
             "numberOfBytes": "20"
           },
-          "t_contract(IERC20)4301": {
+          "t_contract(IERC20)3578": {
             "label": "contract IERC20",
             "numberOfBytes": "20"
           }
@@ -979,6 +984,171 @@
           }
         },
         "namespaces": {
+          "erc7201:openzeppelin.storage.Ownable": [
+            {
+              "contract": "OwnableUpgradeable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:24",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    },
+    "9be4bcba430d020546abf720d7c649d7dd07bfeda6cae3cab5d0187f8133918b": {
+      "address": "0xAd5C66a7dc3238C2F4C3b9AC6d007f3b17Bf8319",
+      "txHash": "0x5f3b863af0034f5dbf4fa8b46bb2efb177adf0a4e5c5c58ebfac56ed46fa3303",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "token",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_contract(IERC20)1253",
+            "contract": "UPTMerkleDrop",
+            "src": "src/UPTMerkleDrop.sol:38"
+          },
+          {
+            "label": "merkleRoot",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_bytes32",
+            "contract": "UPTMerkleDrop",
+            "src": "src/UPTMerkleDrop.sol:39"
+          },
+          {
+            "label": "passCardNFT",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_contract(IERC721)1370",
+            "contract": "UPTMerkleDrop",
+            "src": "src/UPTMerkleDrop.sol:40"
+          },
+          {
+            "label": "hasClaimed",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "UPTMerkleDrop",
+            "src": "src/UPTMerkleDrop.sol:42"
+          },
+          {
+            "label": "BLAST",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_contract(IBlast)2324",
+            "contract": "UPTMerkleDrop",
+            "src": "src/UPTMerkleDrop.sol:47"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)64_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(OwnableStorage)14_storage": {
+            "label": "struct OwnableUpgradeable.OwnableStorage",
+            "members": [
+              {
+                "label": "_owner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(PausableStorage)190_storage": {
+            "label": "struct PausableUpgradeable.PausableStorage",
+            "members": [
+              {
+                "label": "_paused",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_contract(IBlast)2324": {
+            "label": "contract IBlast",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IERC20)1253": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IERC721)1370": {
+            "label": "contract IERC721",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Pausable": [
+            {
+              "contract": "PausableUpgradeable",
+              "label": "_paused",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol:21",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
           "erc7201:openzeppelin.storage.Ownable": [
             {
               "contract": "OwnableUpgradeable",

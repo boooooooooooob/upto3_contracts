@@ -1,11 +1,10 @@
 const { ethers, upgrades } = require('hardhat')
 
 async function main() {
-  const contractFactory = await ethers.getContractFactory('UPTMerkleDrop')
+  const contractFactory = await ethers.getContractFactory('RedStarEnergy')
 
   const contract = await upgrades.upgradeProxy(
-    // '0x562d60dA90925Ea3d69Dae1A6A55D440fc144354',
-    '0x07a9dA97DbBBB57F83C7c1390dafa13fdB20Ce5e',
+    '0xB05a3b113957757BD03E3ba35C1D242861199194',
     contractFactory
   )
 
