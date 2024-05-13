@@ -30,4 +30,7 @@
 | Red Star Energy | 0xB05a3b113957757BD03E3ba35C1D242861199194 |
 | Event Voting NFT | 0x8bc67D8BF0dBB3Dcd0d7dF0Aff55f2c3D661d2f6 |
 | Event Voting Controller | 0x35d147377D2e5921CaA5b910c33B99c893C84Ee4 | 
-
+| Token Vesting for team | 0x834510b8baa12E79450480abAce407a7e95Ae4e4 |
+| Token Vesting for treasury | 0x8441602ad769d454DAc984A820e61A0CD666Db43 |
+| Token Vesting for marketing  | 0xCdb31035162D1819a1e2dFA52804c2D6D759382F |
+| Token Vesting for LP | 0xAfc7F5EC0C5ceB62858975DE1b01E5FA6f78696f |
