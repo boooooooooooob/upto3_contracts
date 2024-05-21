@@ -8,6 +8,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 import {RedStarEnergy} from "./RedStarEnergy.sol";
 
@@ -58,11 +59,16 @@ contract EventVotingController is
 
     IBlast public BLAST;
 
+    mapping(string => bool) public isValidWho; // deprecated
+    mapping(bytes32 => bool) public newIsValidWho; // deprecated
+
     // be sure to use the appropriate testnet/mainnet BlastPoints address
     // BlastPoints Testnet address: 0x2fc95838c71e76ec69ff817983BFf17c710F34E0
     // BlastPoints Mainnet address: 0x2536FE9ab3F511540F2f9e2eC2A805005C3Dd800
     address public constant BlastPointsAddress =
         0x2536FE9ab3F511540F2f9e2eC2A805005C3Dd800;
+
+    mapping(bytes32 => bool) public IsAllowedWho;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -90,6 +96,14 @@ contract EventVotingController is
         stakingContract = StakingContract(_stakingContract);
     }
 
+    function setAllowedWho(string memory who) external onlyOwner {
+        IsAllowedWho[keccak256(abi.encodePacked(who))] = true;
+    }
+
+    function unsetAllowedWho(string memory who) external onlyOwner {
+        IsAllowedWho[keccak256(abi.encodePacked(who))] = false;
+    }
+
     function createEvent(
         string memory who,
         string memory what,
@@ -104,6 +118,11 @@ contract EventVotingController is
         require(
             isAsciiString(what),
             "The 'what' contains non-ASCII characters"
+        );
+
+        require(
+            IsAllowedWho[keccak256(abi.encodePacked(who))],
+            "Invalid 'who'"
         );
 
         // Limit the 'what' string to 280 characters (like Twitter)
